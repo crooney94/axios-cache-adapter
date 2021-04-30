@@ -3,9 +3,6 @@ const webpackConfig = require('./webpack.config')
 
 process.env.CHROME_BIN = require('puppeteer').executablePath()
 
-// explained at http://mike-ward.net/2015/09/07/tips-on-setting-up-karma-testing-with-webpack/
-webpackConfig.entry = ''
-
 module.exports = function (config) {
   config.set({
 
@@ -14,10 +11,11 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'webpack'],
 
     // list of files / patterns to load in the browser
     files: [
+      'test/spec/**.js',
       'test/main.js'
     ],
 
@@ -55,14 +53,14 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: process.env.NODE_WATCH ? ['Chrome'] : ['ChromeHeadlessNoSandbox'],
+    browsers: process.env.NODE_WATCH ? ['Chrome'] : ['Chrome'],
 
-    customLaunchers: {
-      ChromeHeadlessNoSandbox: {
-        base: 'ChromeHeadless',
-        flags: ['--no-sandbox']
-      }
-    },
+    // customLaunchers: {
+    //   ChromeHeadlessNoSandbox: {
+    //     base: 'ChromeHeadless',
+    //     flags: ['--no-sandbox']
+    //   }
+    // },
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -71,7 +69,6 @@ module.exports = function (config) {
     // Concurrency level
     // how many browser should be started simultaneous
     concurrency: Infinity,
-
     webpack: webpackConfig,
 
     // htmlReporter: {

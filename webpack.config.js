@@ -1,6 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+var nodeExternals = require('webpack-node-externals');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const cwd = process.cwd()
@@ -32,6 +33,7 @@ dependencies.forEach(dep => {
     commonjs2: dep
   }
 })
+dependencies.push(nodeExternals())
 
 if (process.env.NODE_BUILD_FOR === 'node') {
   version.push('node')
@@ -115,13 +117,10 @@ const build = {
 
 // TEST CONFIG
 const test = {
-  entry: ['test/main.js'],
+  entry: './test/main.js',
   output: {
     path: path.join(cwd, '.tmp'),
     filename: 'main.js'
-  },
-  resolve: {
-    modules: ['node_modules', '.']
   },
   mode: 'development',
   module: {
@@ -129,7 +128,7 @@ const test = {
       // Transpile ES2015 to ES5
       {
         test: /\.js$/,
-        exclude: /node_modules|\utilities.spec\.js$/,
+        exclude: ['/node_modules/'],
         use: [
           {
             loader: 'babel-loader',
@@ -151,7 +150,7 @@ const test = {
           options: { esModules: true }
         },
         enforce: 'post',
-        exclude: /node_modules|\.spec\.js$/
+        exclude: ['/node_modules']
       },
 
       // Load font files
@@ -163,6 +162,8 @@ const test = {
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin()
   ],
+  externalsPresets: { node: true },
+  externals,
   devServer: {
     // contentBase: path.join(__dirname, 'public'), // boolean | string | array, static file location
     compress: true, // enable gzip compression
@@ -175,5 +176,4 @@ const test = {
   target: 'web',
   devtool: 'source-map'
 }
-
 module.exports = process.env.NODE_ENV === 'test' ? test : build

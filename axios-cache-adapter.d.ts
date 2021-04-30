@@ -137,6 +137,8 @@ export interface RedisDefaultOptions
 
 export class RedisDefaultStore { constructor(client: any, options?: RedisDefaultOptions); }
 
+export class IoRedisStore { constructor(client: any, HASH_KEY?: string); }
+
 export interface IAxiosCacheAdapterRequest
 {
 	/**
